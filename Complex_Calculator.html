@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Complex Calculator</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+							<!-- Logo -->
+								<a href="index.html" class="logo">
+									<span class="symbol"><img src="images/logo.svg" alt="" /></span><span class="title">Zack Raeburn</span>
+								</a>
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+                            <li><a href="About.html">About</a></li>
+                            <li><a href="https://uk.linkedin.com/in/zackraeburn?trk=pub-pbmap" target="_blank">LinkedIn Profile</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							<h1>Complex Calculator</h1>
+							
+                            <div>
+                                <center>
+                                    <span><img src="images/Complex%20Calculator/Capture01.png" class="ComplexCalc" alt="" /></span>
+                                    <span><img src="images/Complex%20Calculator/Capture02.png" class="ComplexCalc" alt="" /></span>
+                                    <span><img src="images/Complex%20Calculator/Capture03.png" class="ComplexCalc" alt="" /></span>
+                                    <span><img src="images/Complex%20Calculator/Capture04.png" class="ComplexCalc" alt="" /></span>
+                                </center>
+                            </div>
+                            
+                            <br>
+                            
+                            <div>
+                                <center>
+                                    <h2><a href="https://1drv.ms/u/s!Aiftunz5wHgjgQ_KdxCfoTuh9cU0" target="_blank">DOWNLOAD</a></h2>
+                                </center>
+                            </div>
+                            
+                            <hr>
+                            
+                            <p>I created this complex calculator for a university project. Although it lacks accuracy with really, really big numbers it can handle a surprising amount of abuse when it comes to the length and complexity of calculations. Obviously not as complete or able as other calculators out there (I’m looking at you Microsoft) but still a good attempt nonetheless.</p>
+                            <p>Although this particular version of the calculator does not use the Reverse Polish Notation(RPN) algorithm, at one point it did. The reason I removed it is to see what kind of algorithm I could come up with on my own (and not because the files got corrupted and I had to start again). I think the algorithm I have created isn’t original, efficient or even comparable really but I still learned a lot from this project.</p>
+                            <p>Given the choice to start over, I would make it an RPN based calculator. However as it stands currently this version uses strings and markers in those string to calculate the equations fed to it one bit at a time.</p>
+                            <p>For an example of how this program works take the sum:</p>
+                            <p>10+(5*4)</p>
+                            <p>The program would find the brackets first and isolate whatever is inside using a substring:</p>
+                            <p>5*4</p>
+                            <p>As there are only two digits in this new string it can now remove the operator and convert each number to a long double, calculate the equation, and reinsert the answer as a string into the original string:</p>
+                            <p>10+20</p>
+                            <p>So following this logic the answer would of course turn out to be 30. I have left the debug console visible with the application so if you’re interested you can see some of the logic that the program runs through.</p>
+                            
+						</div>
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<div class="inner">
+							<section>
+								<h2>Get in touch</h2>
+								<form method="post" action="#">
+									<div class="fields">
+										<div class="field half">
+											<input type="text" name="name" id="name" placeholder="Name" />
+										</div>
+										<div class="field half">
+											<input type="email" name="email" id="email" placeholder="Email" />
+										</div>
+										<div class="field">
+											<textarea name="message" id="message" placeholder="Message"></textarea>
+										</div>
+									</div>
+									<ul class="actions">
+										<li><input type="submit" value="Send" class="primary" /></li>
+									</ul>
+								</form>
+							</section>
+							<ul class="copyright">
+								<li>&copy; Zack Raeburn. All rights reserved</li>
+							</ul>
+						</div>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
