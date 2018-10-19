@@ -1,6 +1,6 @@
 <?php
     
-    include("Mail.php");
+    //include("Mail.php");
 
 ?>
 
