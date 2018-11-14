@@ -1,8 +1,4 @@
-<?php
-    
-    //include("Mail.php");
 
-?>
 
 <!DOCTYPE HTML>
 <!--
