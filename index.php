@@ -21,7 +21,7 @@
 						<div class="inner">
 
 							<!-- Logo -->
-								<!--<a href="index.html" class="logo">
+								<!--<a href="./" class="logo">
 									<span class="symbol"><img src="images/logo.svg" alt="" /></span><span class="title">Phantom</span>
 								</a>-->
 
@@ -39,9 +39,9 @@
 					<nav id="menu">
 						<h2>Navigation</h2>
 						<ul>
-							<li><a href="index.html">Home</a></li>
+							<li><a href="./">Home</a></li>
                             <li><a href="About.html">About</a></li>
-                            <li><a href="https://uk.linkedin.com/in/zackraeburn?trk=pub-pbmap" target="_blank">LinkedIn Profile</a></li>
+                            <li><a href="http://www.linkedin.com/in/lilyraeburn" target="_blank">LinkedIn Profile</a></li>
 						</ul>
 					</nav>
 
