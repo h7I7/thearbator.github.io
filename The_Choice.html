@@ -81,11 +81,21 @@
                             
                             <hr>
                             
-                            <p>This project is my first deep dive into the world of shaders.</p>
+                            <p>The idea of this game is that the players attention can be directed and focused by the coloured areas of the level. The coloured areas of the level are made up of a radius and world position. There are three types of coloured areas: static, trackable, and walkable.</p>
+							<p>Every frame all three types of positions are combined into one array, along with an array for radii, and sent to the gpu where the frame is then drawn using this information.</p>
+							<p>The throbbing of the colour areas is a effect controlled in the shader and does not have any reference to world position or radius.
                             
-							<center>
-							<p><b>SCREENSHOTS COMING SOON</b></p>
-							</center>
+							<h2>Static</h2>
+							<p>Static position contain a world position and a radius that generally do not change, although both values can be edited at runtime.</p>
+							<span><img src="images/The%20Choice/static.gif" class="EHG" alt="" /></span>
+							<br><br>
+							<h2>Trackable</h2>
+							<p>Trackable positions contain a handle to an object transform that passes its world position into the array every frame. The radius can be changed at runtime too.</p>
+							<span><img src="images/The%20Choice/trackable.gif" class="EHG" alt="" /></span>
+							<br><br>
+							<h2>Walkable</h2>
+							<p>Similarly to static positions, the world position of this type doesn't change much, but can. The radius is changed depending on the distance to another object, in this case the player.</p>
+							<span><img src="images/The%20Choice/walkable.gif" class="EHG" alt="" /></span>
 							
 						</div>
 					</div>
