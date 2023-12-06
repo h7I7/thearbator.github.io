@@ -200,7 +200,7 @@ input, select, textarea {
 		line-height: 1.5;
 		margin: 0 0 2em 0;
 		text-transform: uppercase;
-		letter-spacing: 0.35em;
+		letter-spacing: 0.15em;
 	}
 
 		h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -293,12 +293,21 @@ input, select, textarea {
 	hr {
 		border: 0;
 		border-bottom: solid 1px #c9c9c9;
-		margin: 2em 0;
+		margin: 0em 0;
 	}
 
 		hr.major {
 			margin: 3em 0;
 		}
+		
+		hr.main {
+			margin: 1em 0;
+			
+		}
+	
+	#UniversityProjectsHeader {
+		margin-bottom: 0;
+	}
 
 	.align-left {
 		text-align: left;
@@ -2748,7 +2757,7 @@ input, select, textarea {
 			}
 
 		* + .tiles {
-			margin-top: 2em;
+			margin-top: -2em;
 		}
 
 		body.is-preload .tiles article {
