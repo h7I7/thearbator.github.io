@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Zack Raeburn</title>
+		<title>Lily Raeburn</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -191,7 +191,7 @@
 								</form>
 							</section>
 							<ul class="copyright">
-								<li>&copy; Zack Raeburn. All rights reserved</li>
+								<li>&copy; Lily Raeburn. All rights reserved</li>
 							</ul>
 						</div>
 					</footer>
