@@ -99,7 +99,12 @@ input, select, textarea {
 	}
 
 	body {
-	background-image: linear-gradient(40deg, rgb(0 0 0) 60%, #C8A2C8);
+		background-image: linear-gradient(40deg, rgb(0 0 0) 60%, #C8A2C8);
+	}
+	
+	#About {
+		background-color: black;
+		background-image: none;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
