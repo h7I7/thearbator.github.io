@@ -61,14 +61,59 @@
                                 <center>
                                     <h2><a href="https://github.com/h7I7/Reverse-Engineering-Dark-Souls" target="_blank">GITHUB REPO</a></h2>
                                 </center>
-								<p><b>Note</b> Obviously theres some info here that could be used to gain an advantage in Dark Souls PvP, please don't cheat in games. This project was intended for educational purposes only.</p>
-								<h3><u>Controls</u></h3>
+								<p><b>Note:</b> While this write-up includes technical details that could potentially be misused in Dark Souls PvP, I urge you not to cheat in games. This project was conducted purely for educational purposes.</p>
+								<a><h3>Controls</h3></a>
                                 <ul>
                                     <li><b>F1</b> - Toggle Infinite Health</li>
                                 </ul>
 							</div>
-							<hr>
-                            <p>This is, admittedly, a small project. However, most of the time spent working on this project was spent reading through the dark souls disassembly and piecing together how things worked. Hopefully at some point in the future I will feel up for the challenge again, infinite stamina would be fun.. or maybe a damage multiplier..</p>
+							<br>
+							<a><h2>Introduction</h2></a>
+                            <p>This is, admittedly, a small-scale project, but the bulk of the time was spent dissecting the Dark Souls Remastered disassembly and gradually understanding its inner workings. One of the key challenges was attaching a debugger which requires DBVM, a risky process that can occasionally result in a Blue Screen of Death. Despite these difficulties, the experience was invaluable, and I’m excited about the possibility of taking on similar challenges in the future. Ideas like infinite stamina or a damage multiplier sound like they'd make for interesting follow-up projects!</p>
+							<br>
+							<a><h2>Requirements</h2></a>
+							<p>To complete this project, you'll need a copy of Dark Souls Remastered and Cheat Engine. Although Cheat Engine is often viewed as just a tool for game cheats, it's actually quite sophisticated for reverse engineering. Its simplicity in enabling cheats is not a flaw, but rather a testament to its effectiveness as a powerful hacking tool.</p>
+							<br>
+							<p>For the sake of brevity, I’ll assume you are already familiar with Dark Souls Remastered and general video game mechanics. As such, I won’t be covering details like the game's mechanics, menus, locations, or stats. I also won’t dive deeply into how to use Cheat Engine, as this guide focuses more on the underlying technology and the reverse engineering process rather than the specifics of this software.</p>
+							<br>
+							<a><h2>Finding the Health Value</h2></a>
+							<p>The first step is to open both Dark Souls Remastered and Cheat Engine. Next, you'll need to attach Cheat Engine to the Dark Souls Remastered process. To do this, click the computer icon in the top-left corner of the Cheat Engine window [1] and select the appropriate process [2]. It should be listed as either "DARK SOULS™: REMASTERED" or "DarkSoulsRemastered.exe". You can quickly filter through the processes by typing in the Process List [3]. When you have selected the process click "Open" [4].</p>
+							<center>
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth1.PNG" class="EHG" alt="" /></span>
+							</center>
+							<br><hr><br>							
+							<p>Create a character and move to a location for testing. I’m using Firelink Shrine, just after the tutorial, due to its easy access to both a bonfire and enemies. Next, find your current health value in the game [1] and enter it into the "Value" field in Cheat Engine [2]. Since we're looking for the exact value, there’s no need to change the scan type. It’s always a good rule of thumb to assume that whole number values are stored as 4-byte integers unless you can’t find them. In this case, a 4-byte value corresponds to an int32 in C++, since it occupies 32 bits of memory in RAM (4 bytes = 32 bits; 1 byte = 8 bits; 4 * 8 = 32). To execute the scan, click "First Scan" [3].</p>
+							<center>
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth2.PNG" class="EHG" alt="" /></span>
+							</center>
+							<br><hr><br>
+							<p>Now that we’ve completed our first scan, we are presented with a list of results [1]. This panel displays a grid containing memory addresses that match the type we scanned for - in this case, 4-byte integers. It also shows the current, previous, and initial scan values for each address. It’s important to note that the values displayed here are constantly updating and volatile, meaning they can change at any time, which is a key aspect of the reverse engineering process.</p>
+							<p>Next, we want to change our HP [2] (I did this by getting hit by a skeleton) and use "Next Scan" to search for the new health value [3]. At this point, there are two scan options: "New Scan" and "Next Scan." "New Scan" clears the current address list, allowing us to start a fresh search, while "Next Scan" filters the current list based on the new values, helping us narrow down the correct address.</p>
+							<center>
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth3.PNG" class="EHG" alt="" /></span>
+							</center>
+							<br><hr><br>
+							<p>Keep repeating this process until you have only a few values left in the address list [1]. In some other games, you might end up with just one value, or you could have hundreds, making it difficult to narrow the list further. This happens because the game may store multiple instances of the same value in different locations. One of these will be the actual value you’re looking for, while the others are often used for UI purposes or as copies, and can be considered "duds" that will need to be identified and discarded. In this game, there is one true value for health, while a few others are used for UI and display purposes.</p>
+							<p><b>NOTE: </b>If you’re following along, you might need to repeat the whole process up to this point several times to find the correct value. Unfortunately you will only find this a little later on. Reverse engineering can be time-consuming in this regard.<p>
+							<p>Select all the remaining values and use the red arrow [2] to move them to the bottom panel [3]. These values will now be saved until Cheat Engine is closed, and won’t be erased when starting a new scan. You can set descriptions for the values to help keep track of the ones you want to keep, which will be useful later. The rest of the information shown in this panel is the same as the address list above.</p>
+							<center>
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth4.PNG" class="EHG" alt="" /></span>
+							</center>
+							<br><hr><br>
+							<p>Now you’ll need to experiment with the values by changing them to observe their effects. To do this, double-click the "Value" field [1] for the variable you want to modify, and a pop-up box will appear where you can set the new value [2]. I recommend going through the values from top to bottom, making small, incremental changes. This helps minimize the risk of crashes and allows you to better track how each value affects the game. Keep an eye on the HP value in-game while doing this [3], as it will provide immediate feedback on whether you’re modifying the correct value. Additionally, a good sign that you’ve found the correct value is that all of the other values will immediately update to match the new value you just input.</p>
+							<p>It’s important to understand that modifying values comes with some risk, as changing the wrong value may cause the game to crash, particularly if you're altering values without knowing their exact purpose. For this reason, I suggest changing values one at a time and testing the effects before moving on to the next.</p>
+							<p>If the game does crash, it’s important to note that you will likely need to start over. This is because the values we’re working with are stored on the heap. In simple terms, the heap is a region of memory used for dynamic allocation, where variables like health values are stored during the runtime of an application. When the game is restarted, the memory locations of these values on the heap will change. In contrast, variables stored on the stack (such as function calls or local variables) typically have fixed memory locations within a session, but values stored on the heap can be more volatile and relocate between different runs of the application or even at runtime. This means that after a restart, the memory addresses we’ve been working with may no longer point to the correct values, and we’ll need to perform the scanning process again to find them. More on this later.</p>
+							<center>
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth5.PNG" class="EHG" alt="" /></span>
+							</center>
+							<br><hr><br>
+							<p>Once you find the variable that changes the in-game value (in my case, it was the bottom one), you'll need to test whether this is the real value or one of the fake "display" values. To do this, check the "Active" box [1] beside the variable to lock it. Locking the value means that, even when the game changes it, Cheat Engine will revert it back immediately. Now, take some damage in the game or, if you're below full health, try healing. If the health value snaps back to what it was when locked, then you've found the correct variable!</p>
+							<p>At this point, it’s a good idea to rename the variable to something more meaningful so you can track it easily [2]. You can now delete the other values, as you won’t need them anymore.</p>
+							<center>
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth6.PNG" class="EHG" alt="" /></span>
+							</center>
+							<br>
+							<p>To be continued...</p>
 						</div>
 					</div>
 
