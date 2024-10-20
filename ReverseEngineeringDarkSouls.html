@@ -81,7 +81,9 @@
 							<p>Quick Tip: A 4-byte integer (int32) occupies 32 bits of memory (4 bytes = 32 bits). If the value doesn't show up, scan using other common data types like float or double.</p>
 							<p>After clicking "New Scan" and/or "First Scan" [4], a list of matching addresses will appear. These addresses correspond to memory locations where the health value might be stored. Now, take damage in the game (I did this by getting hit by a skeleton) and use "Next Scan" to search for the updated health value [5].</p>
 							<center>
+							<a href="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth.jpg" target="_Blank">
 							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealth.jpg" class="EHG" alt="" /></span>
+							</a>
 							</center>
 							<br>
 							<a><h2>Finding the Health Pointer</h2></a>
@@ -91,19 +93,24 @@
 							<p>You’ll now see a window displaying the ‘Counts’ and ‘Instructions’ [2]. The ‘Count’ shows how many times the code was executed, while the ‘Instruction’ lists the memory location, hex opcodes, and the assembly (ASM) disassembly. Double-click on the instruction with the fewest calls or the one triggered when you took damage, as this is likely the one tied to your health value. A new window will appear showing the disassembly around the selected instruction [3] as well as the stack frame at the time the instruction was executed [4]. For more information on stack frame layout in x86-64 architecture, check out this <a href="https://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_Blank">article by Eli Bendersky</a>.</p>
 							<p>In this 'Extra Info' window you can also see that Cheat Engine has kindly suggested the value of the pointer needed to find this address [5]. We won't be using this though as I am interested in finding this value manually.</p>
 							<center>
+							<a href="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer1.jpg" target="_Blank">
 							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer1.jpg" class="EHG" alt="" /></span>
+							</a>
 							</center>
 							<p>For example, the instruction might look like this: <code>mov [rbx+000003E8],eax</code></p>
 							<p>Here, the value in the <code>eax</code> register is being written to the memory location <code>[rbx+000003E8]</code>, which corresponds to the current address <code>0D51B538</code>. We can treat this like a simple equation: <code>[rbx+000003E8] = 0D51B538</code></p>
 							<p>This allows us to calculate the base pointer by subtracting the offset: <code>rbx = 0D51B538 - 000003E8 = 0D51B150</code></p>
 							<p>To be fair, we could have simply looked at the <code>rbx</code> register, as it already contains the base pointer, which is exactly what Cheat Engine suggested in the first place. However, going through the manual process of calculating it helps reinforce understanding of how these memory addresses and pointers work in practice.</p>
 							<hr>
+							<br>
 							<p>So now we have the base pointer for our health, we're done! Or are we... Unfortunately, the base pointer we just found is still on the heap and will be invalid after the application restarts. What we're actually looking for is pointer on the stack, which will look like this: <code>DarkSoulsRemastered.exe+???????</code>. These pointers are the holy grail and never change location between application runs. </p>
-							<p>Let's recap, from our example we now know that <code>[0D51B150+000003E8] = 0D51B538</code>. So now we want to search for our base pointer: <code>0D51B150</code>. To do this, check the 'Hex' box in Cheat Engine, paste the base pointer into the search box, and start a scan. This will search for memory addresses that point to our base pointer.</p>
-							<p>We now have a list of all the values that are a pointer to our base pointer. There are quite a lot of results, so we’ll need to narrow them down. To start I would suggest hitting "Next Scan" a few times but this probably won't do much, so we need to put out detective hats on. This is usually the point where I will get stuck for hours, days, weeks, or even much longer as there is no guarantee that we will find what we need, there might be red herrings, and lets not forget that applications are not designed to be reversed.</p>
+							<p>Let's recap, from our example we now know that <code>[<b>0D51B150</b>+000003E8] = 0D51B538</code>. So now we want to search for our base pointer: <code><b>0D51B150</b></code>. To do this, check the 'Hex' box in Cheat Engine, paste the base pointer into the search box, and start a scan. This will search for memory addresses that point to our base pointer.</p>
+							<p>We now have a list of all the values that are a pointer to our base pointer. There are quite a lot of results, so we’ll need to narrow them down. To start I would suggest hitting "Next Scan" a few times but this probably won't do much, so we need to put our detective hats on. This is usually the point where I will get stuck for hours, days, weeks, or even much longer as there is no guarantee that we will find what we need, there might be red herrings, and lets not forget that applications are not designed to be reversed.</p>
 							<p>One approach would be to go through all of these values one-by-one and run "Find out what accesses this address" on them, scouring through all of the intructions and reading dissasembly to try and see if it's relevant to what we're looking for. I've done this and I wouldn't recommend this unless you are desperate. For now let's try and spot the best starting point, looking at the list of values we can see there are many that begin with 0, many that begin with 2, but only one value that begins with 1. This seems like a promising lead, so I’ll start my search here and see if it reveals a pointer that leads to a stable memory address.</p>
 							<center>
+							<a href="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer2.jpg" target="_Blank">
 							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer2.jpg" class="EHG" alt="" /></span>
+							</a>
 							</center>
 							<p>To be continued...</p>
 						</div>
