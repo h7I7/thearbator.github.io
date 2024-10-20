@@ -144,6 +144,7 @@
 								<li><p><b>Multi-Level Pointer Chains:</b> In more complex games, the pointer chain might not be as simple as one or two levels deep. You may encounter pointer chains that span several levels, with each pointer leading to another memory address that, in turn, points to the next one. This means that you’ll need to recursively trace through each level of pointers to reach the final value. Multi-level pointer chains can be very time-consuming to identify and map out correctly, especially in larger, more complex games.</p></li>
 								<li><p><b>Dynamic Memory and ASLR:</b> Address Space Layout Randomization (ASLR) is a security feature used by many modern operating systems to randomly arrange the positions of key data areas, such as the base of executables and libraries in memory. This means that each time the game runs, the memory addresses of key components may change, making it harder to locate fixed pointers or pointer chains across different sessions. ASLR forces the reverse engineer to use techniques like base address calculation or signature scanning to find stable pointers.</p></li>
 							</ol>
+							<p><b>Fun Tip:</b> One of the hardest games I've tried to reverse is Bloons Tower Defence 6... Seriously that game has some crazy anti-cheat going on.</p>
 							<hr>
 							<br>
 							<p>To be continued...</p>
