@@ -86,8 +86,8 @@
 							</a>
 							</center>
 							<br>
-							<a><h2>Finding the Health Pointer</h2></a>
-							<p>We now have our health value in Cheat Engine, but if we were to close and reopen Dark Souls, that value would no longer be valid. This is because the health value is stored on the heap, which is dynamically allocated memory. To solve this, we need to find a series of pointers that lead to our health value, starting from a stable memory location on the stack. This allows us to reliably locate the correct memory address every time the program runs, as the heap’s dynamic memory allocation changes between runs.</p>
+							<a><h2>Finding the Health Pointer Chain</h2></a>
+							<p>We now have our health value in Cheat Engine, but if we were to close and reopen Dark Souls, that value would no longer be valid. This is because the health value is stored on the heap, which is dynamically allocated memory. To solve this, we need to find a series of pointers that lead to our health value (typically called a pointer chain), starting from a stable memory location on the stack. This allows us to reliably locate the correct memory address every time the program runs, as the heap’s dynamic memory allocation changes between runs.</p>
 							<p>The next step involves attaching a debugger to Dark Souls. As mentioned earlier, this requires DBVM, which carries some risks, such as system crashes. You can attempt to attach a regular debugger, but the game will most likely detect it and crash as a result. Additionally, if you're trying any of these methods, make sure to start the game in 'Offline Mode' to avoid getting banned from Dark Souls. For more information about DBVM, you can read <u><a href="https://wiki.cheatengine.org/index.php?title=DBVM" target="_Blank">Cheat Engine's page on DBVM.</a></u></p>
 							<p>To find our health pointer, we need to identify the code that accesses the memory address where the health value is stored. To do this, right-click the value in Cheat Engine and select "Find out what writes to this address" [1]. A pop-up will prompt you to attach a debugger, and you’ll get a warning about DBVM, click "Yes" to both. Once the DBVM debugger is running, try to move quickly, as leaving it running for too long can lead to a system crash. Be sure to take some damage in-game and then stop the debugger.</p>
 							<p>You’ll now see a window displaying the ‘Counts’ and ‘Instructions’ [2]. The ‘Count’ shows how many times the code was executed, while the ‘Instruction’ lists the memory location, hex opcodes, and the assembly (ASM) disassembly. Double-click on the instruction with the fewest calls or the one triggered when you took damage, as this is likely the one tied to your health value. A new window will appear showing the disassembly around the selected instruction [3] as well as the stack frame at the time the instruction was executed [4]. For more information on stack frame layout in x86-64 architecture, check out this <a href="https://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_Blank">article by Eli Bendersky</a>.</p>
@@ -103,15 +103,49 @@
 							<p>To be fair, we could have simply looked at the <code>rbx</code> register, as it already contains the base pointer, which is exactly what Cheat Engine suggested in the first place. However, going through the manual process of calculating it helps reinforce understanding of how these memory addresses and pointers work in practice.</p>
 							<hr>
 							<br>
-							<p>So now we have the base pointer for our health, we're done! Or are we... Unfortunately, the base pointer we just found is still on the heap and will be invalid after the application restarts. What we're actually looking for is pointer on the stack, which will look like this: <code>DarkSoulsRemastered.exe+???????</code>. These pointers are the holy grail and never change location between application runs. </p>
+							<p>So now we have the base pointer for our health, we're done! Or are we... Unfortunately, the base pointer is still on the heap, meaning it will be invalid after a restart. What we need is a pointer on the stack, which will look like this: <code>DarkSoulsRemastered.exe+???????</code>. These pointers are the holy grail and never change location between application runs. </p>
 							<p>Let's recap, from our example we now know that <code>[<b>0D51B150</b>+000003E8] = 0D51B538</code>. So now we want to search for our base pointer: <code><b>0D51B150</b></code>. To do this, check the 'Hex' box in Cheat Engine, paste the base pointer into the search box, and start a scan. This will search for memory addresses that point to our base pointer.</p>
 							<p>We now have a list of all the values that are a pointer to our base pointer. There are quite a lot of results, so we’ll need to narrow them down. To start I would suggest hitting "Next Scan" a few times but this probably won't do much, so we need to put our detective hats on. This is usually the point where I will get stuck for hours, days, weeks, or even much longer as there is no guarantee that we will find what we need, there might be red herrings, and lets not forget that applications are not designed to be reversed.</p>
-							<p>One approach would be to go through all of these values one-by-one and run "Find out what accesses this address" on them, scouring through all of the intructions and reading dissasembly to try and see if it's relevant to what we're looking for. I've done this and I wouldn't recommend this unless you are desperate. For now let's try and spot the best starting point, looking at the list of values we can see there are many that begin with 0, many that begin with 2, but only one value that begins with 1. This seems like a promising lead, so I’ll start my search here and see if it reveals a pointer that leads to a stable memory address.</p>
+							<p>One approach would be to go through all of these values one-by-one and run "Find out what accesses this address" on them, scouring through all of the intructions and reading dissasembly to try and see if it's relevant to what we're looking for. Then making a note of the offset and saving them to our address list at the bottom. I've done this and I wouldn't recommend this unless you have already tried everything else. For now let's try and spot the best starting point, looking at the list of values we can see there are many that begin with 0, many that begin with 2, but only one value that begins with 1. This seems like a promising lead, so I’ll start my search here and see if it reveals a pointer that leads to a stable memory address.</p>
+							<p>Running 'Find out what accesses this address' on this value reveals many instructions like <code>cmp [rdx], rax</code>, where <code>rdx</code> equals our pointer <code>01C4E4D40</code>. This is similar to what we saw earlier, except the offset is 0, meaning it’s equivalent to <code>cmp [rdx + 0], rax</code>. This will be important shortly.</p>
 							<center>
 							<a href="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer2.jpg" target="_Blank">
 							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer2.jpg" class="EHG" alt="" /></span>
 							</a>
 							</center>
+							<br>
+							<p>Double-click the value to save it, then start a new scan using that value. You should now see even more pointers to this address, and one of them will be green indicating it’s a stack address, which is what we’re looking for. Save this one as well. With this stack pointer in hand, we can begin building a pointer chain that will automatically lead us to the correct health address, even between application runs.</p>
+							<center>
+							<a href="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer3.jpg" target="_Blank">
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer3.jpg" class="EHG" alt="" /></span>
+							</a>
+							</center>
+							<br>
+							<p>To recap again we have a number of pointers that can be visualized as follows:</p>
+							<ul> 
+								<li><code>[DarkSoulsRemastered.exe+1A31768] = 01C4E4D40</code></li>
+								<li><code>[01C4E4D40 + 0] = 0D51B150</code></li>
+								<li><code>[0D51B150 + 3E8] = 0D51B150</code></li>
+								<li><code>[0D51B150] = Health value</code></li>
+							</ul>
+							<p>Which is exactly how we can construct our pointer in Cheat Engine!</p>
+							<center>
+							<a href="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer4.jpg" target="_Blank">
+							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer4.jpg" class="EHG" alt="" /></span>
+							</a>
+							</center>
+							<br>
+							<p>Now that we have our health pointer, you can delete the other values and save this Cheat Engine table for future use. This example was relatively straightforward, but finding pointer chains can often be much more challenging, especially in modern games. Here are some reasons why:</p>
+							<ol>
+								<li><p><b>Anti-Cheat Mechanisms:</b> Many online or competitive games include anti-cheat mechanisms designed to prevent tampering with memory values. These mechanisms can detect when a debugger is attached, and games might crash or behave unpredictably if external programs like Cheat Engine attempt to modify in-game memory. Additionally, some anti-cheat software will actively block memory scanning and debugging tools, making it significantly harder to find and manipulate pointer chains.</p></li>
+								<li><p><b>Code Obfuscation:</b> Some games employ code obfuscation techniques to make reverse engineering more difficult. This could involve obfuscating memory structures or instructions so that they don’t follow predictable patterns. For example, the game might randomize or encrypt pointer values, or use dynamically generated code that changes each time the game runs. This makes it much harder to find reliable pointer chains, as the memory layout may be entirely different from one session to the next.</p></li>
+								<li><p><b>Games Using Interpreted Languages:</b> Games built using interpreted languages like Java or C# can also pose additional challenges. In these cases, memory allocation can be handled by a virtual machine (VM), which adds an extra layer of abstraction. The VM may move memory values around during runtime through techniques like garbage collection, making it difficult to track the actual pointer chains because memory addresses might change unpredictably.</p></li>
+								<li><p><b>Deliberate Pointer Obfuscation:</b> Some games intentionally obscure their pointer chains as a defense against memory tampering. For instance, they might rotate between a series of pointers, with only one valid at a given time, while accessing the others leads to incorrect values or even crashes. Accessing an invalid pointer could result in a null reference exception, which can crash the game or lead to undefined behavior. These rotating pointers make it extremely difficult to reliably locate the correct pointer chain, requiring advanced techniques and deeper knowledge of the game's memory architecture to bypass.</p></li>
+								<li><p><b>Multi-Level Pointer Chains:</b> In more complex games, the pointer chain might not be as simple as one or two levels deep. You may encounter pointer chains that span several levels, with each pointer leading to another memory address that, in turn, points to the next one. This means that you’ll need to recursively trace through each level of pointers to reach the final value. Multi-level pointer chains can be very time-consuming to identify and map out correctly, especially in larger, more complex games.</p></li>
+								<li><p><b>Dynamic Memory and ASLR:</b> Address Space Layout Randomization (ASLR) is a security feature used by many modern operating systems to randomly arrange the positions of key data areas, such as the base of executables and libraries in memory. This means that each time the game runs, the memory addresses of key components may change, making it harder to locate fixed pointers or pointer chains across different sessions. ASLR forces the reverse engineer to use techniques like base address calculation or signature scanning to find stable pointers.</p></li>
+							</ol>
+							<hr>
+							<br>
 							<p>To be continued...</p>
 						</div>
 					</div>
