@@ -98,8 +98,8 @@
 							<span><img src="images/Reverse%20Engineering%20Dark%20Souls/FindingHealthPointer1.jpg" class="EHG" alt="" /></span>
 							</a>
 							</center>
-							<p>For example, the instruction might look like this: <code>mov [rbx+000003E8],eax</code></p>
-							<p>Here, the value in the <code>eax</code> register is being written to the memory location <code>rbx+000003E8</code>, which corresponds to the current address <code>0D51B538</code>. The square brackets <code>[]</code> denote a pointer dereference, which is the equivalent of the <code>-></code> and <code>*</code> operators in C++. We can treat this like a simple equation: <code>rbx+000003E8 = 0D51B538</code></p>
+							<p>For example, the instruction might look like this: <code>mov [rbx+000003E8],eax</code>. The square brackets <code>[]</code> denote a pointer dereference, which is the equivalent of the <code>-></code> and <code>*</code> pointer operators in C++.</p>
+							<p>Here, the value in the <code>eax</code> register is being written to the memory location <code>rbx+000003E8</code>, which corresponds to the current address <code>0D51B538</code>. We can treat this like a simple equation: <code>rbx+000003E8 = 0D51B538</code></p>
 							<p>This allows us to calculate the base pointer by subtracting the offset: <code>rbx = 0D51B538 - 000003E8 = 0D51B150</code></p>
 							<p>To be fair, we could have simply looked at the <code>rbx</code> register, as it already contains the base pointer, which is exactly what Cheat Engine suggested in the first place. However, going through the manual process of calculating it helps reinforce understanding of how these memory addresses and pointers work in practice.</p>
 							<hr>
